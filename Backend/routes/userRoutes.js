@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 
 module.exports.register = (app, database) => {
+
+    app.get('/api', (req, res) => {
+        res.status(200).json({ message: 'API is running!' });
+    });
     // GET all users
     
     app.get('/api/users', async (req, res) => {
@@ -44,6 +48,10 @@ module.exports.register = (app, database) => {
             // Validate required fields
             if (!name || !email || !password || !role) {
                 return res.status(400).json({ success: false, message: 'Required fields are missing.' });
+            }
+            const validRoles = ['Author', 'Regular Attendee'];
+            if (!validRoles.includes(role)) {
+                return res.status(400).json({ success: false, message: `Invalid role. Accepted roles are: ${validRoles.join(', ')}` });
             }
 
             // Hash the password
