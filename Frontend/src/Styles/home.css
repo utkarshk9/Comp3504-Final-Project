@@ -1,0 +1,90 @@
+/* home.css */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4a90e2, #2c3e50); /* A dynamic background gradient */
+    color: #fff; /* White text for contrast */
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.hero {
+    max-width: 800px;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    color: #fff; /* White text */
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Adding a subtle shadow to enhance readability */
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #f1f1f1; /* Light grey text */
+    line-height: 1.6;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.cta-button {
+    text-decoration: none;
+    background-color: #2a4d85; /* Blue button background */
+    color: #fff;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
+}
+
+.cta-button:hover {
+    background-color: #1a3d61; /* Darker blue on hover */
+    transform: translateY(-5px); /* Slight hover effect */
+}
+
+.cta-button:active {
+    transform: translateY(0); /* Reset transform on click */
+}
+
+.cta-icon {
+    font-size: 1.3rem; /* Icon size */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .cta-button {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .cta-button {
+        font-size: 0.9rem;
+        padding: 10px 18px;
+    }
+}

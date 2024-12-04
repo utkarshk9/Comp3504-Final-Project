@@ -4,6 +4,25 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 
+
+
+const cors = require('cors');
+app.use(cors()); // Allow all origins (you can customize this for security)
+//  route handlers here
+app.get('/api/events', (req, res) => {
+    const events = [
+        { event_id: 1, title: 'Tech Conference 2024', description: 'A conference about tech.', fee: 100.00, created_at: '2024-06-15' },
+        { event_id: 2, title: 'Hackathon 2024', description: 'A coding competition.', fee: 50.00, created_at: '2024-07-10' }
+    ];
+    res.json({ events });
+});
+
+
+
+
+
+
+
 // Load environment variables
 dotenv.config();
 

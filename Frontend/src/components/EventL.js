@@ -8,12 +8,14 @@ const EventList = () => {
         // Fetch events from the backend
         const fetchEvents = async () => {
             try {
-                const response = await API.get('/events');
+                const response = await API.get('http://localhost:8080/api/events');
+                console.log(response.data);  // Log the response data to check its structure
                 setEvents(response.data.events);
             } catch (error) {
                 console.error('Error fetching events:', error);
             }
         };
+        
 
         fetchEvents();
     }, []);

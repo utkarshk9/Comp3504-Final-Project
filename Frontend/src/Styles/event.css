@@ -1,0 +1,47 @@
+/* pages/Events.css */
+.events-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.events-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #333;
+}
+
+.event-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.event-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-item h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #007bff;
+}
+
+.event-item p {
+    font-size: 1rem;
+    margin: 5px 0;
+}
+
+.event-item .event-date {
+    font-weight: bold;
+    color: #555;
+}
+
+.event-item .event-location {
+    color: #777;
+}

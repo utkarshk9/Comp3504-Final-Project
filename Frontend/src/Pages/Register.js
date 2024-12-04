@@ -1,13 +1,14 @@
 import React from 'react';
 import RegisterEvent from '../components/RegisterEvent';
-
-
+import '../Styles/Register.css'; // Adding CSS file for the page style
 
 const Register = () => {
     return (
-        <div>
-            <h1>Register for the Event</h1>
-            <RegisterEvent />
+        <div className="register-page">
+            <div className="register-container">
+                <h1>Register for the Event</h1>
+                <RegisterEvent />
+            </div>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import API from '../services/api';
+import '../Styles/RegisterEvent.css'; // Adding a CSS file for form styles
 
 const RegisterEvent = () => {
     const [formData, setFormData] = useState({
@@ -7,6 +8,8 @@ const RegisterEvent = () => {
         email: '',
         password: '',
         role: 'Regular', // Default role
+        pronouns: '',
+        dietary_restrictions: '',
     });
 
     const handleChange = (e) => {
@@ -25,36 +28,68 @@ const RegisterEvent = () => {
     };
 
     return (
-        <div>
-            <h1>Register</h1>
+        <div className="register-event">
             <form onSubmit={handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-                </label>
-                <label>
-                    Email:
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-                </label>
-                <label>
-                    Password:
-                    <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-                </label>
-                <label>
-                    Pronouns:
-                    <input type="pronouns" name="pronouns" value={formData.pronouns} onChange={handleChange} />
-                </label>
-                <label>
-                dietary_restrictions:
-                    <input type="dietary_restrictions" name="dietary_restrictions" value={formData.dietary_restrictions} onChange={handleChange}/>
-                </label>
-                <label>
-                    Role:
+                <div className="form-group">
+                    <label>Name:</label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        value={formData.name} 
+                        onChange={handleChange} 
+                        required 
+                        placeholder="Your Full Name" 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Email:</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        required 
+                        placeholder="Your Email Address" 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Password:</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        required 
+                        placeholder="Your Password" 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Pronouns:</label>
+                    <input 
+                        type="text" 
+                        name="pronouns" 
+                        value={formData.pronouns} 
+                        onChange={handleChange} 
+                        placeholder="Your Pronouns (e.g., they/them)" 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Dietary Restrictions:</label>
+                    <input 
+                        type="text" 
+                        name="dietary_restrictions" 
+                        value={formData.dietary_restrictions} 
+                        onChange={handleChange} 
+                        placeholder="Any Dietary Restrictions?" 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Role:</label>
                     <select name="role" value={formData.role} onChange={handleChange}>
                         <option value="Regular Attendee">Regular Attendee</option>
                         <option value="Author">Author</option>
                     </select>
-                </label>
+                </div>
                 <button type="submit">Register</button>
             </form>
         </div>
