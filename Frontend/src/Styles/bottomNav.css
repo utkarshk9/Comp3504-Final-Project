@@ -1,0 +1,49 @@
+/* src/Styles/bottomNav.css */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: #2a4d85;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover .nav-icon {
+    color: #f0db4f;
+}
+
+.nav-icon {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.nav-label {
+    color: #dcdcdc;
+}
+
+/* Mobile responsiveness for bottom navigation */
+@media (max-width: 768px) {
+    .bottom-nav {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bottom-nav {
+        padding: 8px;
+    }
+}

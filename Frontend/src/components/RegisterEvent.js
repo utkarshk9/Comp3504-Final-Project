@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import API from '../services/api';
-import '../Styles/RegisterEvent.css'; // Adding a CSS file for form styles
+import '../Styles/RegisterEvent.css';
 
 const RegisterEvent = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
-        role: 'Regular', // Default role
+        role: 'Regular Attendee', // Default role corrected
         pronouns: '',
         dietary_restrictions: '',
     });
+
+    const navigate = useNavigate(); // Initialize navigate
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,8 +22,9 @@ const RegisterEvent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await API.post('/registeruser', formData);
+            await API.post('http://localhost:8080/api/registeruser', formData);
             alert('Registration successful!');
+            navigate('/'); // Redirect to the home page
         } catch (error) {
             console.error('Error registering user:', error);
             alert('Failed to register.');
