@@ -1,0 +1,381 @@
+/* General Page Styles */
+
+:root {
+    --apple-dark: #1d1d1f;
+    --apple-blue: #0071e3;
+    --apple-gray: #86868b;
+    --apple-light: #f5f5f7;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: #333;
+}
+
+/* Profile Page Layout */
+.user-profile-page {
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+}
+
+/* Sidebar Section */
+.profile-info {
+    background: linear-gradient(135deg, #f3f5f7, #e8eef2);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.profile-info .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #f0f0f0, #dcdcdc);
+    border: 2px solid #007bff;
+    color: #0066ff;
+    font-size: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+.profile-info .profile-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 102, 255, 0.2);
+}
+
+.profile-info h1 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin: 1rem 0;
+    font-weight: 600;
+}
+
+.profile-info p {
+    color: #5a6c7d;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+/* Buttons Section */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.action-buttons button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-buttons .primary-button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.action-buttons .secondary-button {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.action-buttons .admin-button {
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Registration Info Section */
+.registration-info {
+    background: linear-gradient(135deg, #f3f5f7, #e8eef2);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.registration-info h2 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #007bff;
+    background: linear-gradient(to right, #007bff, transparent);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.registration-info .fee-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.registration-info .fee-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.registration-info .fee-item.total {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-top: 15px;
+    padding: 15px 0;
+    border-top: 2px solid #eee;
+}
+
+/* Registered Events Section */
+.registered-events {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+    background: linear-gradient(135deg, #f3f5f7, #e8eef2);
+}
+
+.registered-events h2 {
+   font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #007bff;
+    background: linear-gradient(to right, #007bff, transparent);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.registered-events .events-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    padding: 0;
+    align-items: start;
+    background: linear-gradient(165deg, #f0f7f4, #e8f5ee);
+}
+
+.registered-events .events-grid .event-card {
+    background: linear-gradient(165deg, #e8f0fe, #a4bee3) !important;
+    padding: 8px !important;
+    margin: 10px !important;
+    min-height: 120px !important;
+}
+
+.registered-events .event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(165deg, #e1ebfc, #d8e6fc) !important;
+}
+
+.registered-events .event-card h3 {
+    color: #eff7ff;
+    font-size: 1.2rem;
+    font-weight: 600;
+
+    background: linear-gradient(to right, #2c3e50, #34495e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+
+
+.registered-events .event-card .event-details {
+    padding-top: 4px !important;
+    margin-top: 4px !important;
+}
+
+.registered-events .event-card .event-details p {
+    padding-top: 0px;
+    margin: 2px 0 !important;
+    
+    font-size: 0.9rem;
+   
+    font-weight: bold;
+}
+
+/* Loading and Error Styles */
+.profile-loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 2rem;
+}
+
+.profile-loading-container p,
+.error-container p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 1rem;
+}
+
+.error-container button {
+    padding: 0.75rem 1.5rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.error-container button:hover {
+    background-color: #c0392b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .user-profile-page {
+        grid-template-columns: 1fr;
+        margin: 1rem auto;
+        gap: 1rem;
+    }
+    
+    .registered-events .events-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-info .profile-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        margin: 0 auto 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+        color: #0066ff;
+        font-size: 2rem;
+    }
+}
+
+/* Add container class */
+.user-container {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 60px;
+    background: var(--apple-light);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating Background Elements */
+.user-container::before,
+.user-container::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.05), rgb(184, 148, 148));
+    filter: blur(100px);
+    z-index: 0;
+    animation: float 20s infinite alternate ease-in-out;
+}
+
+.user-container::before {
+    top: -300px;
+    left: -300px;
+}
+
+.user-container::after {
+    bottom: -300px;
+    right: -300px;
+    animation-delay: -10s;
+}
+
+/* Animation for floating effect */
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(100px, 50px) rotate(45deg); }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .user-container {
+        background: var(--apple-dark);
+    }
+}
+
+.payment-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.payment-form {
+    max-width: 500px;
+    margin: 1rem 0;
+}
+
+.card-element {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    margin-bottom: 1rem;
+}
+
+.payment-button {
+    width: 100%;
+    padding: 0.8rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payment-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.payment-error {
+    color: #dc3545;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}

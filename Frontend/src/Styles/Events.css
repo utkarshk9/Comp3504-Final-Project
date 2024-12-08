@@ -1,0 +1,294 @@
+:root {
+    --text-color: #1d1d1f;
+    --primary-text: #333;
+    --secondary-text: #666;
+    --muted-text: #888;
+    --error-color: #dc3545;
+    --error-bg: #fff5f5;
+    --apple-dark: #1d1d1f;
+    
+    
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1a1a1a;
+        --text-color: #ffffff;
+        --primary-text: #ffffff;
+        --secondary-text: #cccccc;
+        --muted-text: #999999;
+    }
+}
+
+/* Main container */
+.events-page {
+    
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: black;
+}
+.events-page::before,
+.events-page::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.05), rgb(184, 148, 148));
+    filter: blur(100px);
+    z-index: 0;
+    animation: float 20s infinite alternate ease-in-out;
+}
+
+.events-page::before {
+    top: -300px;
+    left: -300px;
+}
+.events-page::after {
+    bottom: -300px;
+    right: -300px;
+    animation-delay: -10s;
+}
+/* Page title */
+.events-page h1 {
+    
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-text);
+    font-size: 2.5rem;
+}
+
+/* Section styling */
+.events-section {
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.events-section h2 {
+    color: var(--primary-text);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Event list container */
+.event-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 1200px) {
+    .event-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Loading and error states */
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 1rem;
+}
+
+.loading-container p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.error-container {
+    text-align: center;
+    color: var(--error-color);
+    padding: 2rem;
+    background-color: var(--error-bg);
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .events-page {
+        padding: 1rem;
+    }
+
+    .event-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation for sections */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Events page specific styles */
+.events-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.conference-events {
+    text-align: center;
+}
+
+.conference-events h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.core-events,
+.optional-events {
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.core-events h2,
+.optional-events h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.loading,
+.error,
+.no-events {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.error {
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .events-container {
+        padding: 1rem;
+    }
+
+    .event-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Event card layout */
+.event-card {
+    display: flex;
+    background: white !important;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+/* Left section with image */
+.event-left {
+    flex: 0 0 300px;
+}
+
+.image-container {
+    position: relative;
+    height: 100%;
+}
+
+.event-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Right section with details */
+.event-right {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
+}
+
+.details {
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    font-weight: 600;
+}
+
+/* Registration section */
+.registration {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.fees {
+    margin: 1rem 0;
+}
+
+.fee-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.register-btn:disabled {
+    background: #ccc;
+}
+
+.section-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: -10px 0 20px 0;
+    font-style: italic;
+    text-align: center;
+}
