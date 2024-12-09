@@ -172,7 +172,7 @@ const AdminDashboard = () => {
     };
 
     const renderEventCard = (event) => (
-        <div key={event.event_id} className="event-card glass-card">
+        <div key={event.event_id} className="event-card-glass-card">
             <h3>{event.name}</h3>
             <p>{event.description}</p>
             {event.event_type === 'optional' && (
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
     );
 
     const renderFeeForm = () => (
-        <div className="edit-form-container glass-card">
+        <div className="edit-form-container-glass-card">
             <form onSubmit={handleFeeSubmit} className="fee-form">
                 <h2>Edit Core Registration Fees</h2>
                 <div className="fee-note">
@@ -329,7 +329,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-dashboard">
-            <div className="user-info glass-card">
+            <div className="user-info-glass-card">
                 <UserAvatar role="Admin" name= {userName} />
                 <div className="user-details">
                     <h1>Admin Dashboard</h1>
@@ -339,7 +339,7 @@ const AdminDashboard = () => {
                     <div className="admin-controls">
                         <button onClick={() => navigate('/profile')}>Profile</button>
                         <button onClick={() => handleEditEvent({})}>Add Event</button>
-                        <button onClick={() => localStorage.clear() || navigate('/login')}>Logout</button>
+                        
                     </div>
                 </div>
             </div>
@@ -352,7 +352,7 @@ const AdminDashboard = () => {
             
             {activeSection === 'dashboard' && (
                 <>
-                    <div className="events-section glass-card">
+                    <div className="events-section-glass-card">
                         <h2>Core Conference Events</h2>
                         <div className="fee-summary">
                             <div className="fee-summary-content">
@@ -367,18 +367,17 @@ const AdminDashboard = () => {
                         <div className="events-grid">
                             {events.filter(e => e.event_type === 'core').map(renderEventCard)}
                         </div>
-                    </div>
-
-                    <div className="events-section glass-card">
-                        <h2>Optional Conference Events</h2>
+                        <h2>Optional  Events</h2>
                         <div className="events-grid">
                             {events.filter(e => e.event_type === 'optional').map(renderEventCard)}
                         </div>
                     </div>
+
+                
                 </>
             )}
         </div>
     );
 };
 
-export default AdminDashboard;
+export default AdminDashboard; 

@@ -7,8 +7,14 @@ import { EVENT_IMAGES, getEventImage } from '../components/common/eventImages';
 
 const EventCard = ({ event }) => {
     const [isRegistered, setIsRegistered] = React.useState(false);
-    const { userId, isLoggedIn } = useAuth();
+    const { userId, isLoggedIn, userRole } = useAuth();
     const navigate = useNavigate();
+
+    const getUserFee = () => {
+        if (event.event_type === 'optional') return event.optional_fee;
+        if (userRole === 'author') return event.author_fee;
+        return event.regular_fee;
+    };
 
     React.useEffect(() => {
         console.log('Current userId:', userId);
@@ -94,26 +100,23 @@ const EventCard = ({ event }) => {
                 </p>
                 <div className="event-fees">
                     <h4>Registration Fees:</h4>
-                    {event.event_type === 'core' && (
-                        <p>
-                            {isLoggedIn && (
-                                <>
-                                    <strong>Your Fee: </strong>
-                                    ${AuthProvider.userRole === 'author' ? event.author_fee : event.regular_fee}
-                                </>
-                            )}
-                            {!isLoggedIn && (
-                                <>
-                                    <strong>Author Fee: </strong>
-                                    ${event.author_fee}<br />
-                                    <strong>Regular Atandee:</strong>
-                                    ${event.regular_fee}
-                                </>
-                            )}
+                    {event.event_type === 'optional' ? (
+                        <p className="highlighted-fee">
+                            <strong>Event Fee:</strong> ${getUserFee()}
+                            {isLoggedIn && <span className="your-fee"> (Your Fee)</span>}
                         </p>
+                    ) : (
+                        <>
+                            <p className={userRole === 'author' ? 'highlighted-fee' : ''}>
+                                <strong>Author Fee:</strong> ${event.author_fee}
+                                {userRole === 'author' && <span className="your-fee"> (Your Fee)</span>}
+                            </p>
+                            <p className={userRole === 'regular' ? 'highlighted-fee' : ''}>
+                                <strong>Regular Attendee:</strong> ${event.regular_fee}
+                                {userRole === 'regular' && <span className="your-fee"> (Your Fee)</span>}
+                            </p>
+                        </>
                     )}
-                    {event.optional_fee && <p><strong>Event Fee:</strong> ${event.optional_fee}</p>}
-                    
                 </div>
             </div>
 

@@ -440,21 +440,36 @@
     padding-top: 1rem;
 }
 
+@media (max-width: 768px) {
+    .info-section {
+        margin-top: 1.5rem;
+        padding-top: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-section {
+        margin-top: 0.5rem;
+        padding-top: 0.25rem;
+    }
+}
+
 .info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 2rem;
 }
 
 .info-card {
     text-align: center;
-    padding: 1.5rem;
+    padding: 2rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     transition: transform 0.3s ease;
+    margin-bottom: 2rem;
 }
 
 .info-card:hover {
@@ -776,9 +791,26 @@
     animation: spin 1s linear infinite;
 }
 
-/* Gradient overlay for event cards */
+/* Add responsive adjustments for info grid */
+@media (max-width: 1024px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 1.5rem;
+    }
+}
 
-/* Ensure text is fully visible */
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .info-card {
+        padding: 1.5rem;
+    }
+}
+
+
 
 
 

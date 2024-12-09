@@ -1,0 +1,146 @@
+.payment-success-page {
+    min-height: 100vh;
+    background-color: #f7f7f7;
+    padding: 40px 20px;
+}
+
+.payment-success-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.success-icon {
+    width: 70px;
+    height: 70px;
+    background: #28a745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 40px;
+}
+
+.error-icon {
+    width: 70px;
+    height: 70px;
+    background: #dc3545;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 40px;
+}
+
+.tickets-container {
+    margin: 30px 0;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.ticket {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.ticket-info {
+    flex: 1;
+}
+
+.ticket-info h4 {
+    margin: 0 0 10px 0;
+    color: #32325d;
+}
+
+.ticket-info p {
+    margin: 5px 0;
+    color: #6b7c93;
+}
+
+.ticket-qr {
+    margin-left: 20px;
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.download-button, .return-button {
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    border: none;
+}
+
+.download-button {
+    background-color: #0570de;
+    color: white;
+}
+
+.return-button {
+    background-color: #6b7c93;
+    color: white;
+}
+
+.download-button:hover, .return-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.email-notice {
+    margin-top: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.email-notice p {
+    margin: 5px 0;
+    color: #6b7c93;
+}
+
+.processing {
+    text-align: center;
+    padding: 40px 0;
+}
+
+@media (max-width: 768px) {
+    .ticket {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ticket-qr {
+        margin: 20px 0 0 0;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .payment-success-container {
+        padding: 20px;
+    }
+} 

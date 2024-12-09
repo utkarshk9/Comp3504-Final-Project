@@ -7,6 +7,8 @@ import Register from "./Pages/RegisterEvent";
 import Login from "./Pages/Login";
 import Profile from "./Pages/User";
 import AdminDashboard from "./Pages/AdminDashboard";
+import Payment from './Pages/Payment';
+import PaymentSuccess from './Pages/PaymentSuccess';
 
 const App = () => {
     return (
@@ -20,6 +22,8 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    <Route path="/payment" element={<Payment />} />
+                    <Route path="/payment-success" element={<PaymentSuccess />} />
                 </Routes>
             </Router>
         </AuthProvider>

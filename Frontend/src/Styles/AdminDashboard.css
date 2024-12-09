@@ -5,7 +5,12 @@
     --apple-secondary: #86868b;
     --apple-border: #d2d2d7;
 }
-
+.user-info-glass-card,
+.profile-avatar-container,
+.user-details,
+.admin-controls {
+    transition: all 0.3s ease;
+}
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
     background-color: black;
@@ -16,10 +21,9 @@ body {
 }
 
 .admin-dashboard {
-    max-width: 1100px;
-    width: 92%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 80px 1.5rem 2rem 1.5rem;
+    padding: 20px 30px;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   
     min-height: 100vh;
@@ -148,33 +152,7 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.event-card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
-.event-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 12px 0;
-}
-
-.event-description {
-    color: #666;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
-
-.event-details {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 20px;
-}
 
 .detail-item {
     display: grid;
@@ -199,26 +177,33 @@ body {
 
 .event-actions {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .event-actions button {
-    padding: 8px 24px;
+    padding: 0.5rem 1.5rem;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
-.event-actions button:first-child {
-    background-color: #007bff;
+.event-actions .edit-btn {
+    background: #007bff;
     color: white;
 }
 
-.event-actions button:last-child {
-    background-color: #dc3545;
+.event-actions .delete-btn {
+    background: #dc3545;
     color: white;
+}
+
+.event-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .event-card:hover {
@@ -303,32 +288,76 @@ button[type="button"]:hover {
     color: #34c759;
     border: 1px solid rgba(52, 199, 89, 0.2);
 }
-
-@media (max-width: 767px) {
+@media (min-width: 768px) {
     .admin-dashboard {
-        width: 96%;
-        padding: 1rem;
+        padding: 20px;
     }
-    
-    .events-section, .fees-section, .event-form {
-        padding: 1rem;
+
+    .user-info-glass-card {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 30px;
+        text-align: left;
+    }
+
+    .profile-avatar-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .user-details {
+        text-align: left;
+    }
+
+    .user-details h1 {
+        font-size: 2.2rem;
+    }
+
+    .admin-controls {
+        justify-content: flex-start;
     }
 }
+
+@media (min-width: 1024px) {
+    .admin-dashboard {
+        padding: 30px;
+    }
+
+    .profile-avatar-container {
+        width: 200px;
+        height: 200px;
+    }
+
+    .user-details h1 {
+        font-size: 2.5rem;
+    }
+}
+@media (min-width: 768px) {
+    .current-registration-fees {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 30px;
+    }
+}
+
+@media (min-width: 768px) {
+    .registration-fees-text {
+        font-size: 1rem;
+    }
+}
+
 
 .user-info {
     display: flex;
     align-items: center;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 113, 227, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 128, 255, 0.1);
     position: relative;
     
 }
 
-.user-avatar {
-    flex: 0 0 auto;
-    margin-right: 4rem;
-}
 
 .user-details {
     flex: 0 1 auto;
@@ -351,12 +380,29 @@ button[type="button"]:hover {
 }
 
 .welcome-message {
-    font-size: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    width: 100%;
+    text-align: center;
+    font-size: large;
+    color: #fff;
+}
+
+.welcome-message h1 {
+    font-size: 2rem;
+    color: #fff;
+    margin: 0;
+    text-align: center;
+}
+
+.welcome-message span {
+    color: #007bff;
+    word-break: break-word;
+    max-width: 100%;
 }
 
 .user-name {
@@ -422,84 +468,132 @@ button[type="button"]:hover {
     font-size: 0.8rem;
     color: var(--apple-secondary);
 }
-
 .admin-controls {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
+    flex-direction: row; /* Stack buttons vertically */
+    gap: 15px; /* Space between buttons */
+    align-items: center; /* Center buttons horizontally */
+    justify-content: center; /* Align buttons centrally */
 }
-
 .admin-controls button {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 6px;
     background: #007bff;
     color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    margin: 0 0.5rem;
+    transition: all 0.2s ease;
+    
+    /* Optional: subtle shadow for depth */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Hover effect */
 .admin-controls button:hover {
     background: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.user-avatar {
-    margin-bottom: 1rem;
-    display: flex;
+/* Active/Click effect */
+.admin-controls button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus state for accessibility */
+.admin-controls button:focus {
+    outline: 2px solid #80bdff;
+    outline-offset: 2px;
+}
+
+/* Optional: Different colors for different actions */
+.admin-controls button[onClick*="profile"] {
+    background: #0056b3;
+}
+
+.admin-controls button[onClick*="Event"] {
+    background: #007bff;
+}
+
+.admin-controls button[onClick*="logout"] {
+    background: #dc3545;  /* red for logout */
+}
+
+/* Hover states for different buttons */
+.admin-controls button[onClick*="logout"]:hover {
+    background: #c82333;
+}
+
+
+.profile-avatar-container {
+    width: 200px; /* Set a fixed width for the avatar */
+    height: 200px; /* Set a fixed height for the avatar */
+    background: white; /* Ensure white background for pixel art */
+    border-radius: 50%; /* Make it circular */
+    display: flex; /* Flexbox to center content */
     justify-content: center;
-}
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    align-items: center;
     margin-bottom: 20px;
 }
+
+.profile-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* changed to contain to prevent stretching */
+    image-rendering: pixelated; /* makes pixel art look crisp */
+}
+.profile-avatar-section {
+    position: relative;
+    margin-bottom: 10px;
+}
+.user-info-glass-card {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
 
 .events-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    gap: 2rem;
+    padding: 2rem;
 }
-
-.event-card {
-    background: white;
+.event-card-glass-card {
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 24px;
     position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 113, 227, 0.15),
+                0 2px 8px rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(0, 123, 255, 0.3);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    margin-bottom: 2rem;
+    text-align: center;
+    
+    color: white;
 }
 
-.event-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-}
-
-.event-description {
-    color: #666;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin: 0;
-}
-
-.event-details {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 16px 0;
+.events-section-glass-card h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #0071e3, #00a3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+    text-align: center;
 }
 
 .detail-row {
@@ -521,41 +615,52 @@ button[type="button"]:hover {
 
 .event-actions {
     display: flex;
-    gap: 10px;
-    margin-top: auto;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .event-actions button {
-    padding: 8px 24px;
+    padding: 0.5rem 1.5rem;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
-.event-actions button:first-child {
-    background-color: #007bff;
+.event-actions .edit-btn {
+    background: #007bff;
     color: white;
 }
 
-.event-actions button:first-child:hover {
-    background-color: #0056b3;
-}
-
-.event-actions button:last-child {
-    background-color: #ff453a;
+.event-actions .delete-btn {
+    background: #dc3545;
     color: white;
 }
 
-.event-actions button:last-child:hover {
-    background-color: #e53935;
+.event-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .edit-form-container {
     max-width: 600px;
     margin: 20px auto;
 }
+.fee-summary-content{
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #0071e3, #00a3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+    font-weight: 600;
+}
+
+
+
 
 .core-fees-section {
     background: var(--apple-gray);
@@ -937,4 +1042,159 @@ button[type="button"]:hover {
 .events-section.glass-card{
     background: white;
     backdrop-filter: blur(15px);
+}
+
+/* Core Conference Events section */
+.core-conference-events {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1000px;  /* match card width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Current Registration Fees section */
+.current-registration-fees {
+    background: rgba(20, 20, 20, 0.6);
+    padding: 20px 30px;
+    border-radius: 8px;
+    margin-top: 20px;
+}/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .admin-dashboard {
+        padding: 20px;
+    }
+
+    .profile-avatar-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .user-details h1 {
+        font-size: 2rem;
+    }
+
+    .events-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .user-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .user-details {
+        margin: 0;
+        position: static;
+    }
+
+    .user-details h1 {
+        font-size: 1.8rem;
+    }
+
+    .user-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dashboard-stats {
+        flex-direction: column;
+        margin-left: 0;
+        gap: 15px;
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .current-registration-fees {
+        padding: 15px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Reset and simplify */
+    .admin-dashboard {
+        padding: 15px;
+        width: 100%;
+    }
+
+    /* Core Conference Events title */
+    .core-conference-events h2 {
+        font-size: 1.8rem;
+        text-align: center;
+        margin: 20px 0;
+        color: #007bff;
+    }
+
+    /* Registration fees section */
+    .current-registration-fees {
+        background: rgba(20, 20, 20, 0.6);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Fee items */
+    .current-registration-fees > * {
+        margin: 5px 0;
+    }
+
+    /* Event cards */
+    .event-card {
+        background: rgba(20, 20, 20, 0.6);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    /* Event card content */
+    .event-card h3 {
+        margin-bottom: 10px;
+    }
+
+    .event-card p {
+        margin: 5px 0;
+    }
+}
+
+/* Base styles for event actions */
+.admin-controls {
+    display: flex;
+    gap: 12px;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 480px) {
+    .admin-controls {
+        flex-direction: column; /* stack buttons vertically */
+        width: 100%;           /* full width */
+        align-items: center;   /* center buttons */
+        gap: 15px;            /* increase gap between buttons */
+    }
+
+    .admin-controls button {
+        width: 80%;           /* make buttons wider */
+        max-width: 250px;     /* but not too wide */
+        padding: 12px 0;      /* taller buttons for better touch targets */
+        font-size: 1rem;
+        text-align: center;
+    }
+}
+
+/* Ensure smooth transition */
+.admin-controls,
+.admin-controls button {
+    transition: all 0.3s ease;
 }
