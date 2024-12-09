@@ -11,5 +11,5 @@ module.exports.register = (app, database) => {
     feeRoutes.register(app, database);
     attendeeRoutes.register(app, database);
     adminRoutes.register(app, database);
-    paymentsRoutes.register(app, database);
+   paymentsRoutes.register(app, database);
 };

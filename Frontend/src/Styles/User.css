@@ -117,47 +117,125 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Registration Info Section */
+/* Registration Information Section */
 .registration-info {
-    background: linear-gradient(135deg, #f3f5f7, #e8eef2);
-    border: 1px solid #e0e0e0;
+    background: white;
     border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.registration-info h2 {
-    font-size: 1.4rem;
-    color: #2c3e50;
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #007bff;
-    background: linear-gradient(to right, #007bff, transparent);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.registration-info .fee-details {
+.fee-details {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.registration-info .fee-item {
+.fee-item {
     display: flex;
     justify-content: space-between;
-    font-size: 1.1rem;
-    color: #666;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
 }
 
-.registration-info .fee-item.total {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #007bff;
-    margin-top: 15px;
-    padding: 15px 0;
-    border-top: 2px solid #eee;
+.fee-item label {
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.fee-item .amount {
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.payment-success-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Buttons Section */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.action-buttons button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-buttons .primary-button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.action-buttons .secondary-button {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.action-buttons .admin-button {
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Payment History Section */
+.payment-history {
+    margin-top: 20px;
+}
+
+.payment-history h3 {
+    color: #2196F3;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.payment-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.payment-status.succeeded {
+    color: #28a745;
+}
+
+.payment-status.pending {
+    color: #ffc107;
+}
+
+.payment-status.failed {
+    color: #dc3545;
+}
+
+.payment-amount {
+    font-size: 16px;
+    color: #495057;
+    margin-top: 5px;
 }
 
 /* Registered Events Section */

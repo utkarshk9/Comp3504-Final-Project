@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios
 const API = axios.create({
-    baseURL: 'https://finalproject-dot-windy-site-440020-f7.uw.r.appspot.com/api/', // Replace with your backend URL
+    baseURL: 'http://localhost:8080/api/', // Replace with your backend URL
     timeout: 5000, // Set a timeout limit (5 seconds)
     headers: {
         'Content-Type': 'application/json',
