@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./components/common/AuthContext";
 import Navbar from "./components/common/Navbar";
 import Home from "./Pages/Home";
@@ -12,7 +12,7 @@ import PaymentSuccess from './Pages/PaymentSuccess';
 
 const App = () => {
     return (
-        <AuthProvider> {/* Wrap the entire Router with AuthProvider */}
+        <AuthProvider>
             <Router>
                 <Navbar />
                 <Routes>
@@ -24,6 +24,7 @@ const App = () => {
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     <Route path="/payment" element={<Payment />} />
                     <Route path="/payment-success" element={<PaymentSuccess />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
         </AuthProvider>

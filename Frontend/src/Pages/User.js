@@ -10,8 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { QRCodeSVG } from 'qrcode.react';
 import { getEventImage } from '../components/common/eventImages';
 
-// Initialize Stripe (put this outside the component)
-const stripePromise = loadStripe('pk_test_51QTc1pCh4dy76T98r8PovtjmjyPMPfemD3v55WvG02Ag11iXYXks6TO9RK5dY5d6xLPu1RDfaFNIqpVBY43wdNA600qDiBvFgL');
+
 /*
 Test Card Numbers:
 Success: 4242 4242 4242 4242
@@ -39,6 +38,7 @@ Use any 5 digits for postal code
     const [totalFees, setTotalFees] = useState(0);
     const [lastPaymentDate, setLastPaymentDate] = useState(null);
     const [paymentHistory, setPaymentHistory] = useState(null);
+    const remainingBalance = totalFees - paidAmount;
 
     const handleLogout = async () => {
         try {
@@ -189,46 +189,18 @@ Use any 5 digits for postal code
 
     const { baseRegistrationFee, additionalEventFees, totalFee } = calculateTotalFees(); 
 
-    const handlePaymentClick = () => {
-        // Calculate unpaid events and their total
-        const unpaidEvents = registeredEvents.filter(event => {
-            const ticket = tickets.find(t => t.eventName === event.name);
-            return !ticket || ticket.paymentStatus !== 'succeeded';
+    const handlePaymentClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        navigate('/payment', { 
+            state: { 
+                amount: remainingBalance,
+                userId: localStorage.getItem("userId"),
+                events: registeredEvents.filter(event => !event.paid) // Pass unpaid events
+            },
+            replace: true
         });
-
-        const unpaidTotal = unpaidEvents.reduce((total, event) => {
-            return total + parseFloat(event.fee || 0);
-        }, 0);
-
-        console.log('Payment Debug:', {
-            unpaidEvents,
-            unpaidTotal,
-            userId: localStorage.getItem("userId")
-        });
-
-        if (unpaidTotal <= 0) {
-            console.log('No unpaid amount to process');
-            return;
-        }
-
-        try {
-            console.log('Attempting navigation to payment page with:', {
-                amount: unpaidTotal,
-                events: unpaidEvents
-            });
-            
-            // Navigate to the Payment page with the necessary data
-            navigate('/payment', {
-                state: {
-                    amount: unpaidTotal,
-                    userId: localStorage.getItem("userId"),
-                    events: unpaidEvents,
-                    returnUrl: '/profile' // Add return URL for after payment
-                }
-            });
-        } catch (error) {
-            console.error('Navigation error:', error);
-        }
     };
 
     if (isLoading) {
@@ -313,7 +285,16 @@ Use any 5 digits for postal code
                             </div>
                         </div>
 
-                        {paidAmount > 0 && (
+                        {remainingBalance > 0 ? (
+                            <button 
+                                className="payment-button"
+                                type="button"
+                                onClick={handlePaymentClick}
+                                style={{ cursor: 'pointer' }} // Make sure cursor shows it's clickable
+                            >
+                                Pay Now ${remainingBalance.toFixed(2)}
+                            </button>
+                        ) : (
                             <div className="payment-success-message">
                                 Payment successful! We look forward to seeing you at the events.
                             </div>
@@ -324,13 +305,8 @@ Use any 5 digits for postal code
                         <h2>Registered Events</h2>
                         {registeredEvents.length > 0 ? (
                             <div className="events-grid">
-                                {registeredEvents
-                                    // First remove duplicates using Map
-                                    .filter((event, index, self) => 
-                                        index === self.findIndex((e) => e.event_id === event.event_id)
-                                    )
-                                    // Then sort by date
-                                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+                                {[...new Map(registeredEvents.map(event => [event.event_id, event])).values()]
+                                    .sort((a, b) => new Date(a.date) - new Date(b.date))  // Sort by date
                                     .map((event, index, sortedEvents) => {
                                         const eventDate = new Date(event.date);
                                         
