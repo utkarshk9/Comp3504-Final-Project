@@ -119,4 +119,4 @@ module.exports.register = (app, database) => {
             });
         }
     });
-}    
+};

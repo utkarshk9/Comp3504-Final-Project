@@ -44,7 +44,19 @@ app.use(express.json());
 app.use((req, res, next) => {
     res.set('Content-Type', 'application/json');
     next();
-});
+});const cors = require('cors');
+
+// Add this configuration to allow requests from specific origins
+const corsOptions = {
+    origin: 'http://localhost:3000', // Allow requests from this origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+ 
 
 // Function to start the server
 const startServer = async () => {

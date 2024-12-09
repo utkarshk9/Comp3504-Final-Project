@@ -1,0 +1,3 @@
+/static/js/*  /static/js/:splat  200
+/static/css/*  /static/css/:splat  200
+/*  /index.html  200 

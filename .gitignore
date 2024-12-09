@@ -1,3 +1,10 @@
 Backend/app.yaml
 Frontend/node_modules
 Frontend/build
+
+
+# Local Netlify folder
+.netlify
+Frontend/node_modules
+Frontend/.env
+

@@ -1,6 +1,7 @@
 module.exports.register = (app, database) => {
    // GET all events
    
+
    app.get('/api/events', async (req, res) => {
     try {
         const query = `
