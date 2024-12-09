@@ -2,3 +2,4 @@ Backend/app.yaml
 
 # Local Netlify folder
 .netlify
+Frontend/node_modules
