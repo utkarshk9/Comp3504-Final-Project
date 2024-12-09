@@ -14,13 +14,15 @@ const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState('dashboard');
     const [editingEvent, setEditingEvent] = useState(null);
     const [registrationFees, setRegistrationFees] = useState({
-        author: { base_fee: 0, fee_id: null },
-        regular: { base_fee: 0, fee_id: null }
+        author: { base_fee: 0, fee_id: null, event_fee: 0 },
+        regular: { base_fee: 0, fee_id: null, event_fee: 0 }
     });
     const [userName, setUserName] = useState('');
     const [editingFees, setEditingFees] = useState({
         author: 0,
-        regular: 0
+        regular: 0,
+        author_event: 0,
+        regular_event: 0
     });
     
 
@@ -32,23 +34,51 @@ const AdminDashboard = () => {
                 API.get('/events')
             ]);
 
+            // Debug logs
+            console.log('Fees Response:', feesResponse.data);
+            console.log('Events Response:', eventsResponse.data);
+
+            // Handle fees - separate author and regular fees
             if (feesResponse.data?.fees) {
-                const fees = feesResponse.data.fees;
+                const feesArray = feesResponse.data.fees;
+                console.log('Fees array:', feesArray);
+                
+                // Find author and regular fees from the array
+                const authorFee = feesArray.find(fee => fee.role === 'Author') || {};
+                const regularFee = feesArray.find(fee => fee.role === 'Regular Attendee') || {};
+                
+                console.log('Found author fee:', authorFee);
+                console.log('Found regular fee:', regularFee);
+
                 setRegistrationFees({
-                    author: fees.find(f => f.role === 'Author'),
-                    regular: fees.find(f => f.role === 'Regular Attendee')
+                    author: {
+                        base_fee: Number(authorFee.base_fee) || 0,
+                        fee_id: authorFee.fee_id,
+                        event_fee: Number(authorFee.event_fee) || 0
+                    },
+                    regular: {
+                        base_fee: Number(regularFee.base_fee) || 0,
+                        fee_id: regularFee.fee_id,
+                        event_fee: Number(regularFee.event_fee) || 0
+                    }
                 });
             }
 
+            // Handle events - using the exact structure from the API
             if (eventsResponse.data?.events) {
-                setEvents(eventsResponse.data.events.map(event => ({
-                    ...event,
-                    Date: event.date || event.Date,
-                    fee: event.event_type === 'optional' ? event.fee : null
-                })));
+                const mappedEvents = eventsResponse.data.events.map(event => ({
+                    event_id: event.event_id,
+                    name: event.name,
+                    description: event.description,
+                    Date: event.Date,
+                    event_type: event.event_type,
+                    optional_fee: event.optional_fee || 0  // Use optional_fee instead of fee
+                }));
+                setEvents(mappedEvents);
             }
         } catch (err) {
-            setError('Failed to load data');
+            console.error('Error fetching data:', err);
+            setError('Failed to load data: ' + err.message);
         } finally {
             setLoading(false);
         }
@@ -127,7 +157,7 @@ const AdminDashboard = () => {
                 name: editingEvent.name?.trim(),
                 description: editingEvent.description?.trim(),
                 event_type: editingEvent.event_type,
-                fee: editingEvent.event_type === 'optional' ? Number(editingEvent.fee) : 0,
+                fee: editingEvent.event_type === 'optional' ? Number(editingEvent.optional_fee) : 0,
                 Date: editingEvent.Date
             };
 
@@ -147,7 +177,22 @@ const AdminDashboard = () => {
     };
 
     const handleEditEvent = (event) => {
-        setEditingEvent(event);
+        // Format the date for datetime-local input if it exists
+        let formattedDate = '';
+        if (event.Date) {
+            // Create date object and adjust for local timezone
+            const eventDate = new Date(event.Date);
+            
+            // Format date to YYYY-MM-DDThh:mm
+            formattedDate = new Date(eventDate.getTime() - eventDate.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+        }
+
+        setEditingEvent({
+            ...event,
+            Date: formattedDate
+        });
         setActiveSection('editForm');
     };
 
@@ -173,8 +218,8 @@ const AdminDashboard = () => {
 
     const renderEventCard = (event) => (
         <div key={event.event_id} className="event-card-glass-card">
-            <h3>{event.name}</h3>
-            <p>{event.description}</p>
+            <h3>{event.name || 'Unnamed Event'}</h3>
+            <p>{event.description || 'No description available'}</p>
             {event.event_type === 'optional' && (
                 <p>
                     <strong>Fee:</strong> ${Number(event.optional_fee || 0).toFixed(2)}
@@ -267,7 +312,7 @@ const AdminDashboard = () => {
                         onChange={(e) => setEditingEvent(prev => ({
                             ...prev,
                             event_type: e.target.value,
-                            fee: e.target.value === 'core' ? null : prev.fee
+                            optional_fee: e.target.value === 'core' ? null : prev.optional_fee
                         }))}
                         required
                     >
@@ -296,10 +341,10 @@ const AdminDashboard = () => {
                             type="number"
                             min="0"
                             step="0.01"
-                            value={editingEvent?.fee || ''}
+                            value={editingEvent?.optional_fee || ''}
                             onChange={(e) => setEditingEvent(prev => ({
                                 ...prev,
-                                fee: e.target.value
+                                optional_fee: e.target.value
                             }))}
                             required
                         />
