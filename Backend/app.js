@@ -2,6 +2,19 @@
 
 const express = require('express');
 const app = express();
+const cors = require('cors');
+
+// Enable CORS for all routes
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'https://aplalphacons.netlify.app',
+        'https://*.netlify.app'  // Allow all Netlify preview deployments
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
 // Only load dotenv in development
 if (process.env.NODE_ENV !== 'production') {
