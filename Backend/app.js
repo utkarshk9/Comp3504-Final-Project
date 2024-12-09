@@ -8,7 +8,9 @@ const cors = require('cors');
 app.use(cors({
     origin: [
         'http://localhost:3000',
-        'https://aplalphacons.netlify.app',
+        'https://aplalphacons.netlify.app', 
+        'https://*.aplalphacons.netlify.app',       
+
         'https://*.netlify.app'  // Allow all Netlify preview deployments
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
