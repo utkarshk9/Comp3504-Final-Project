@@ -14,109 +14,126 @@ module.exports.register = (app, database) => {
     });
     
    
-   // Payment confirmation endpoint
-app.post('/api/payments/confirm', async (req, res) => {
-    console.log('Payment confirmation endpoint hit:', req.body);
-    
-    try {
-        const { clientSecret } = req.body;
-        if (!clientSecret) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Client secret is required' 
-            });
-        }
-
-        // Get payment intent from Stripe
-        const paymentIntentId = clientSecret.split('_secret_')[0];
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    app.post('/api/payments/confirm', async (req, res) => {
+        console.log('Payment confirmation endpoint hit:', req.body);
         
-        console.log('Retrieved payment intent:', paymentIntent);
-
-        // Get userId from payment intent metadata
-        const userId = paymentIntent.metadata.userId;
-        const amountPaid = paymentIntent.amount / 100;
-
-        // Start transaction
-        await database.query('START TRANSACTION');
-
         try {
-            // Insert payment record
-            await database.query(
-                `INSERT INTO payments (
-                    user_id,
-                    amount,
-                    currency,
-                    transaction_id,
-                    payment_method,
-                    status
-                ) VALUES (?, ?, ?, ?, ?, ?)`,
-                [
-                    userId,
-                    amountPaid,
-                    paymentIntent.currency.toUpperCase(),
-                    paymentIntentId,
-                    'card',
-                    'succeeded'
-                ]
-            );
-
-            // Update attendee_events to mark as paid
-            await database.query(
-                `UPDATE attendee_events 
-                 SET payment_status = 'paid', 
-                     payment_date = NOW(),
-                     payment_id = ?
-                 WHERE attendee_id = ? 
-                 AND payment_status = 'pending'`,
-                [paymentIntentId, userId]
-            );
-
-            // Get the updated events and payment information
-            const result = await database.query(
-                `SELECT 
-                    e.event_id,
-                    e.name,
-                    e.description,
-                    e.fee,
-                    e.Date as event_date,
-                    e.event_type,
-                    ae.attendee_event_id,
-                    ae.attendee_id,
-                    ae.created_at as registration_date,
-                    ae.payment_status,
-                    ae.payment_date
-                FROM attendee_events ae
-                INNER JOIN events e ON ae.event_id = e.event_id
-                WHERE ae.attendee_id = ? 
-                ORDER BY ae.created_at DESC`,
-                [userId]
-            );
-
-            // Format tickets
-            const tickets = result.map(event => ({
-                id: event.attendee_event_id.toString(),
-                eventName: event.name,
-                eventDate: event.event_date,
-                eventType: event.event_type,
-                description: event.description,
-                ticketId: `EVT-${event.event_id}-ATT-${event.attendee_event_id}`,
-                price: amountPaid,
-                registrationDate: event.registration_date
-            }));
-
-            res.json({ 
-                success: true, 
-                tickets: tickets,
-                paymentId: paymentIntentId,
-                totalAmount: amountPaid,
-                currency: paymentIntent.currency.toUpperCase(),
-                purchaseDate: new Date().toISOString()
-            });
-
+            const { clientSecret } = req.body;
+            if (!clientSecret) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Client secret is required' 
+                });
+            }
+    
+            // Get payment intent from Stripe
+            const paymentIntentId = clientSecret.split('_secret_')[0];
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+            
+            console.log('Retrieved payment intent:', paymentIntent);
+    
+            const userId = paymentIntent.metadata.userId;
+            const amountPaid = paymentIntent.amount / 100;
+    
+            // Start transaction
+            await database.query('START TRANSACTION');
+    
+            try {
+                // Insert into payments table without destructuring
+                const paymentResult = await database.query(
+                    `INSERT INTO payments (
+                        user_id,
+                        amount,
+                        currency,
+                        transaction_id,
+                        payment_method,
+                        status,
+                        refund_status
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        userId,
+                        amountPaid,
+                        paymentIntent.currency.toUpperCase(),
+                        paymentIntentId,
+                        'card',
+                        'succeeded',
+                        'not_requested'
+                    ]
+                );
+    
+                console.log('Payment insert result:', paymentResult);
+    
+                // Update attendee_events
+                await database.query(
+                    `UPDATE attendee_events 
+                     SET created_at = NOW()
+                     WHERE attendee_id = ?`,
+                    [userId]
+                );
+    
+                // Commit transaction
+                await database.query('COMMIT');
+    
+                // Get the updated events without destructuring
+                const eventsResult = await database.query(
+                    `SELECT DISTINCT 
+                        e.event_id,
+                        e.name,
+                        e.description,
+                        e.fee,
+                        e.Date as event_date,
+                        e.event_type,
+                        ae.attendee_event_id,
+                        ae.attendee_id,
+                        ae.created_at as registration_date
+                    FROM attendee_events ae
+                    INNER JOIN events e ON ae.event_id = e.event_id
+                    WHERE ae.attendee_id = ? 
+                    ORDER BY ae.created_at DESC`,
+                    [userId]
+                );
+    
+                // Filter out duplicates by attendee_event_id
+                const uniqueEvents = eventsResult.filter((event, index, self) =>
+                    index === self.findIndex((e) => e.attendee_event_id === event.attendee_event_id)
+                );
+    
+                // Log the structure to debug
+                console.log('Events Result:', JSON.stringify(uniqueEvents, null, 2));
+    
+                // Format tickets using unique events
+                const tickets = uniqueEvents.map(event => ({
+                    id: event.attendee_event_id.toString(),
+                    eventName: event.name,
+                    eventDate: new Date(event.event_date).toLocaleDateString(),
+                    eventType: event.event_type,
+                    description: event.description,
+                    ticketId: `EVT-${event.event_id}-ATT-${event.attendee_event_id}`,
+                    price: parseFloat(event.fee).toFixed(2),
+                    registrationDate: new Date(event.registration_date).toLocaleDateString(),
+                    paymentStatus: 'succeeded'
+                }));
+    
+                res.json({ 
+                    success: true, 
+                    tickets: tickets,
+                    paymentId: paymentIntentId,
+                    totalAmount: amountPaid,
+                    currency: paymentIntent.currency.toUpperCase(),
+                    purchaseDate: new Date().toISOString()
+                });
+    
+            } catch (error) {
+                // Rollback transaction if an error occurs
+                await database.query('ROLLBACK');
+                console.error('Error in payment confirmation:', error);
+                res.status(500).json({ 
+                    success: false, 
+                    error: 'Failed to process payment',
+                    details: error.message 
+                });
+            }
         } catch (error) {
-            // Rollback transaction if an error occurs
-            await database.query('ROLLBACK');
             console.error('Error in payment confirmation:', error);
             res.status(500).json({ 
                 success: false, 
@@ -124,15 +141,7 @@ app.post('/api/payments/confirm', async (req, res) => {
                 details: error.message 
             });
         }
-    } catch (error) {
-        console.error('Error in payment confirmation:', error);
-        res.status(500).json({ 
-            success: false, 
-            error: 'Failed to process payment',
-            details: error.message 
-        });
-    }
-});
+    });
     // Create payment intent
     app.post('/api/payment/create-intent', async (req, res) => {
         console.log('Payment intent route hit:', req.body);

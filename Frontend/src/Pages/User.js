@@ -10,8 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { QRCodeSVG } from 'qrcode.react';
 import { getEventImage } from '../components/common/eventImages';
 
-// Initialize Stripe (put this outside the component)
-const stripePromise = loadStripe('pk_test_51QTc1pCh4dy76T98r8PovtjmjyPMPfemD3v55WvG02Ag11iXYXks6TO9RK5dY5d6xLPu1RDfaFNIqpVBY43wdNA600qDiBvFgL');
+
 /*
 Test Card Numbers:
 Success: 4242 4242 4242 4242
@@ -36,6 +35,10 @@ Use any 5 digits for postal code
     const [paidAmount, setPaidAmount] = useState(0);
     const [flippedCards, setFlippedCards] = useState({});
     const [showUpdateForm, setShowUpdateForm] = useState(false);
+    const [totalFees, setTotalFees] = useState(0);
+    const [lastPaymentDate, setLastPaymentDate] = useState(null);
+    const [paymentHistory, setPaymentHistory] = useState(null);
+    const remainingBalance = totalFees - paidAmount;
 
     const handleLogout = async () => {
         try {
@@ -85,35 +88,39 @@ Use any 5 digits for postal code
             const userId = localStorage.getItem("userId");
             
             try {
-                const [userResponse, eventsResponse, ticketsResponse] = await Promise.all([
+                const [userResponse, eventsResponse, ticketsResponse, paymentsResponse] = await Promise.all([
                     API.get(`/users/${userId}`),
                     API.get(`/attendee_events/${userId}`),
                     API.get(`/user/tickets/${userId}`),
-                    
+                    API.get(`/payment/history/${userId}`)
                 ]);
 
                 const userData = userResponse?.data?.user || null;
-                const events = eventsResponse?.data?.events || [];
+                // Remove duplicates by event_id
+                const events = [...new Map(eventsResponse?.data?.events.map(event => 
+                    [event.event_id, event]
+                )).values()] || [];
                 const fetchedTickets = ticketsResponse?.data?.tickets || [];
-                
+                const payment = paymentsResponse?.data?.payments || null;
+
                 setUser(userData);
                 setRegisteredEvents(events);
                 setTickets(fetchedTickets);
-                
-                const { paid, unpaid } = events.reduce((acc, event) => {
-                    const ticket = fetchedTickets.find(t => t.eventName === event.name);
-                    const eventFee = parseFloat(event.fee || 0);
-                    
-                    if (ticket && ticket.paymentStatus === 'succeeded') {
-                        acc.paid += eventFee;
-                    } else if (eventFee > 0) {
-                        acc.unpaid += eventFee;
-                    }
-                    return acc;
-                }, { paid: 0, unpaid: 0 });
+                setPaymentHistory(payment);
 
-                setPaidAmount(paid);
-                setUnpaidAmount(unpaid);
+                // Calculate payment totals
+                const totalFees = events.reduce((sum, event) => 
+                    sum + parseFloat(event.fee || 0), 0
+                );
+                
+                const paidAmount = payment?.status === 'succeeded' 
+                    ? parseFloat(payment.amount || 0) 
+                    : 0;
+
+                setTotalFees(totalFees);
+                setPaidAmount(paidAmount);
+                setUnpaidAmount(Math.max(0, totalFees - paidAmount));
+
             } catch (err) {
                 console.error('Error fetching data:', err);
                 setError("Failed to load profile or events.");
@@ -148,6 +155,15 @@ Use any 5 digits for postal code
     }, [user]);
 
     const calculateTotalFees = () => {
+        // Check if registeredEvents is an array, if not return default values
+        if (!Array.isArray(registeredEvents)) {
+            return {
+                baseRegistrationFee: 0,
+                additionalEventFees: 0,
+                totalFee: 0
+            };
+        }
+
         const coreEvents = registeredEvents.filter(
             (event) => event?.event_type?.toLowerCase() === "core"
         );
@@ -171,7 +187,21 @@ Use any 5 digits for postal code
         };
     };
 
-    const { baseRegistrationFee, additionalEventFees, totalFee } = calculateTotalFees();
+    const { baseRegistrationFee, additionalEventFees, totalFee } = calculateTotalFees(); 
+
+    const handlePaymentClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        navigate('/payment', { 
+            state: { 
+                amount: remainingBalance,
+                userId: localStorage.getItem("userId"),
+                events: registeredEvents.filter(event => !event.paid) // Pass unpaid events
+            },
+            replace: true
+        });
+    };
 
     if (isLoading) {
         return (
@@ -237,54 +267,36 @@ Use any 5 digits for postal code
                 <div className="profile-main">
                     <div className="registration-info">
                         <h2>Registration Information</h2>
+                        
                         <div className="fee-details">
                             <div className="fee-item">
-                                <span>Base Registration Fee:</span>
-                                <span>${baseRegistrationFee.toFixed(2)}</span>
+                                <label>Total Event Fees:</label>
+                                <div className="amount">${totalFees.toFixed(2)}</div>
                             </div>
+                            
                             <div className="fee-item">
-                                <span>Additional Event Fees:</span>
-                                <span>${additionalEventFees.toFixed(2)}</span>
+                                <label>Amount Paid:</label>
+                                <div className="amount">${paidAmount.toFixed(2)}</div>
                             </div>
-                            <div className="fee-item total">
-                                <span>Total Fee:</span>
-                                <span>${totalFee.toFixed(2)}</span>
+                            
+                            <div className="fee-item">
+                                <label>Remaining Balance:</label>
+                                <div className="amount">${unpaidAmount.toFixed(2)}</div>
                             </div>
                         </div>
 
-                        {paidAmount > 0 && (
-                            <div className="payment-section paid">
-                                <h3>Amount Paid</h3>
-                                <p className="paid-amount">
-                                    You have paid: CAD ${paidAmount.toFixed(2)}
-                                </p>
-                            </div>
-                        )}
-
-                        {totalFee > paidAmount ? (
-                            <div className="payment-section unpaid">
-                                <h3>Payment Required</h3>
-                                <p className="unpaid-amount">
-                                    Total unpaid amount: CAD ${(totalFee - paidAmount).toFixed(2)}
-                                </p>
-                                <button 
-                                    className="primary-button"
-                                    onClick={() => navigate('/payment', {
-                                        state: {
-                                            amount: totalFee - paidAmount,
-                                            userId: localStorage.getItem("userId"),
-                                            events: registeredEvents
-                                        }
-                                    })}
-                                >
-                                    Pay Unpaid Balance
-                                </button>
-                            </div>
+                        {remainingBalance > 0 ? (
+                            <button 
+                                className="payment-button"
+                                type="button"
+                                onClick={handlePaymentClick}
+                                style={{ cursor: 'pointer' }} // Make sure cursor shows it's clickable
+                            >
+                                Pay Now ${remainingBalance.toFixed(2)}
+                            </button>
                         ) : (
-                            <div className="payment-section paid">
-                                <p className="no-payment-required">
-                                    No payment required - All fees have been paid
-                                </p>
+                            <div className="payment-success-message">
+                                Payment successful! We look forward to seeing you at the events.
                             </div>
                         )}
                     </div>
@@ -293,76 +305,97 @@ Use any 5 digits for postal code
                         <h2>Registered Events</h2>
                         {registeredEvents.length > 0 ? (
                             <div className="events-grid">
-                                {registeredEvents.map((event) => {
-                                    const ticket = tickets.find(t => t.eventName === event.name);
-                                    
-                                    const handleClick = () => {
-                                        if (ticket?.paymentStatus === 'succeeded') {
-                                            setFlippedCards(prev => ({
-                                                ...prev,
-                                                [event.event_id]: !prev[event.event_id]
-                                            }));
-                                        }
-                                    };
+                                {[...new Map(registeredEvents.map(event => [event.event_id, event])).values()]
+                                    .sort((a, b) => new Date(a.date) - new Date(b.date))  // Sort by date
+                                    .map((event, index, sortedEvents) => {
+                                        const eventDate = new Date(event.date);
+                                        
+                                        // Calculate total fees of all events up to this one (by date)
+                                        const totalFeesUpToEvent = sortedEvents
+                                            .slice(0, index + 1)
+                                            .reduce((sum, e) => sum + parseFloat(e.fee || 0), 0);
+                                        
+                                        // Event is paid if it's within the paid amount
+                                        const isPaid = paymentHistory?.status === 'succeeded' && 
+                                                     totalFeesUpToEvent <= parseFloat(paymentHistory.amount || 0);
+                                        
+                                        console.log('Payment Status Check:', {
+                                            eventName: event.name,
+                                            eventDate: event.date,
+                                            eventFee: parseFloat(event.fee),
+                                            totalFeesUpToEvent,
+                                            paymentAmount: parseFloat(paymentHistory?.amount || 0),
+                                            isPaid,
+                                            eventId: event.event_id
+                                        });
 
-                                    return (
-                                        <div 
-                                            key={event.event_id}
-                                            className={`event-card ${flippedCards[event.event_id] ? 'flipped' : ''} ${ticket?.paymentStatus === 'succeeded' ? 'paid' : 'unpaid'}`} 
-                                            onClick={handleClick}
-                                        >
-                                            <div className="event-card-inner">
-                                                <div className="event-card-front">
-                                                    <h3>{event.name}</h3>
-                                                    <div className="event-image">
-                                                        <img 
-                                                            src={getEventImage(event.name) || '/default-event.jpg'} 
-                                                            alt={event.name}
-                                                            onError={(e) => {
-                                                                e.target.onerror = null;
-                                                                e.target.src = '/default-event.jpg';
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    <div className="event-details">
-                                                        <p>Date: {new Date(event.date).toLocaleDateString()}</p>
-                                                        <p>Fee: ${parseFloat(event.fee || 0).toFixed(2)}</p>
-                                                        <p className="payment-status">
-                                                            {ticket?.paymentStatus === 'succeeded' ? (
-                                                                'Status: Paid'
-                                                            ) : (
-                                                                <>
-                                                                    Status: Unpaid
-                                                                    <br />
-                                                                    <small>
-                                                                        Payment Required: ${parseFloat(event.fee || 0).toFixed(2)}
-                                                                    </small>
-                                                                </>
-                                                            )}
-                                                        </p>
-                                                    </div>
-                                                    <span className="flip-instruction">
-                                                        {ticket?.paymentStatus === 'succeeded' 
-                                                            ? 'Click to view ticket' 
-                                                            : `Payment of $${parseFloat(event.fee || 0).toFixed(2)} required`}
-                                                    </span>
-                                                </div>
-                                                {ticket?.paymentStatus === 'succeeded' && (
-                                                    <div className="event-card-back">
-                                                        <div className="qr-code-container">
-                                                            <QRCodeSVG 
-                                                                value={`EVT-${event.event_id}-ATT-${ticket?.id || 'pending'}`}
-                                                                size={150}
+                                        const handleClick = () => {
+                                            if (isPaid) {
+                                                setFlippedCards(prev => ({
+                                                    ...prev,
+                                                    [event.event_id]: !prev[event.event_id]
+                                                }));
+                                            }
+                                        };
+
+                                        return (
+                                            <div 
+                                                key={event.event_id}
+                                                className={`event-card ${flippedCards[event.event_id] ? 'flipped' : ''} ${isPaid ? 'paid' : 'unpaid'}`} 
+                                                onClick={handleClick}
+                                            >
+                                                <div className="event-card-inner">
+                                                    <div className="event-card-front">
+                                                        <h3>{event.name}</h3>
+                                                        <div className="event-image">
+                                                            <img 
+                                                                src={getEventImage(event.name) || '/default-event.jpg'} 
+                                                                alt={event.name}
+                                                                onError={(e) => {
+                                                                    e.target.onerror = null;
+                                                                    e.target.src = '/default-event.jpg';
+                                                                }}
                                                             />
                                                         </div>
-                                                        <p>Scan for entry</p>
-                                                        <span className="flip-instruction">Click to view event details</span>
+                                                        <div className="event-details">
+                                                            <p>Date: {eventDate.toLocaleDateString()}</p>
+                                                            <p>Fee: ${parseFloat(event.fee || 0).toFixed(2)}</p>
+                                                            <p className="payment-status">
+                                                                {isPaid ? (
+                                                                    'Status: Paid'
+                                                                ) : (
+                                                                    <>
+                                                                        Status: Unpaid
+                                                                        <br />
+                                                                        <small>
+                                                                            Payment Required: ${parseFloat(event.fee || 0).toFixed(2)}
+                                                                        </small>
+                                                                    </>
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                        <span className="flip-instruction">
+                                                            {isPaid 
+                                                                ? 'Click to view ticket' 
+                                                                : `Payment of $${parseFloat(event.fee || 0).toFixed(2)} required`}
+                                                        </span>
                                                     </div>
-                                                )}
+                                                    {isPaid && (
+                                                        <div className="event-card-back">
+                                                            <div className="qr-code-container">
+                                                                <QRCodeSVG 
+                                                                    value={`EVT-${event.event_id}-ATT-${event.event_id}`}
+                                                                    size={150}
+                                                                />
+                                                            </div>
+                                                            <p>Scan for entry</p>
+                                                            <span className="flip-instruction">Click to view event details</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
                             </div>
                         ) : (
                             <p>No registered events found.</p>
