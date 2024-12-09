@@ -227,6 +227,72 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+app.get('/api/user/tickets/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        
+        console.log('Fetching tickets for userId:', userId);
+        
+        if (!userId || userId === 'undefined') {
+            return res.status(400).json({
+                success: false,
+                error: 'Valid User ID is required'
+            });
+        }
+        
+        const tickets = await database.query(
+            `SELECT 
+                ae.attendee_event_id,
+                e.name as eventName,
+                e.date as eventDate,
+                e.event_type as eventType,
+                e.description,
+                e.fee as eventFee,
+                (SELECT status FROM payments 
+                 WHERE user_id = ae.attendee_id 
+                 AND status = 'succeeded'
+                 ORDER BY created_at DESC LIMIT 1) as payment_status,
+                (SELECT created_at FROM payments 
+                 WHERE user_id = ae.attendee_id 
+                 AND status = 'succeeded'
+                 ORDER BY created_at DESC LIMIT 1) as payment_date,
+                (SELECT amount FROM payments 
+                 WHERE user_id = ae.attendee_id 
+                 AND status = 'succeeded'
+                 ORDER BY created_at DESC LIMIT 1) as paid_amount
+            FROM attendee_events ae
+            INNER JOIN events e ON ae.event_id = e.event_id
+            WHERE ae.attendee_id = ?
+            GROUP BY ae.attendee_event_id
+            ORDER BY e.date ASC`,
+            [userId]
+        );
+
+        console.log('Raw database response:', tickets);
+
+        res.json({
+            success: true,
+            tickets: tickets.map(ticket => ({
+                id: ticket.attendee_event_id.toString(),
+                eventName: ticket.eventName,
+                eventDate: ticket.eventDate,
+                eventType: ticket.eventType,
+                description: ticket.description,
+                eventFee: parseFloat(ticket.eventFee || 0),
+                paymentStatus: ticket.payment_status || 'unpaid',
+                paymentDate: ticket.payment_date,
+                paidAmount: parseFloat(ticket.paid_amount || 0)
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching user tickets:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch tickets'
+        });
+    }
+});
+
 
 
 };
