@@ -6,13 +6,24 @@ const cors = require('cors');
 
 // Enable CORS for all routes
 app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'https://aplalphacons.netlify.app', 
-        'https://*.aplalphacons.netlify.app',       
-
-        'https://*.netlify.app'  // Allow all Netlify preview deployments
-    ],
+    origin: function(origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'https://aplalphacons.netlify.app',
+            'https://675664dfe2579168feb163ba--aplalphacons.netlify.app', // Your preview URL
+            'https://aplalphacons.netlify.app'
+        ];
+        
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('netlify.app')) {
+            callback(null, true);
+        } else {
+            console.log('Blocked origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
