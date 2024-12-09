@@ -2,10 +2,15 @@
 
 const express = require('express');
 const app = express();
-const dotenv = require('dotenv');
 
-// Load environment variables
-dotenv.config();
+// Only load dotenv in development
+if (process.env.NODE_ENV !== 'production') {
+    try {
+        require('dotenv').config();
+    } catch (error) {
+        console.log('dotenv not loaded in production');
+    }
+}
 
 app.use(express.json());
 

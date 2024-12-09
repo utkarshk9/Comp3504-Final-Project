@@ -1,60 +1,51 @@
 const mysql = require('promise-mysql');
 
-// Load environment variables for non-production environments
+// Load environment variables (only for local development)
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-// Validate required environment variables
-const requiredEnvVars = ['DB_USER', 'DB_PASS', 'DB_NAME', 'DB_HOST', 'DB_PORT'];
-requiredEnvVars.forEach((varName) => {
-  if (!process.env[varName]) {
-    console.error(`Environment variable ${varName} is missing. Please check your .env file or environment settings.`);
-    process.exit(1); // Exit the process if any required variable is missing
-  }
-});
-
-let pool; // Connection pool variable
-
 const connectToDatabase = async () => {
   try {
-    pool = await mysql.createPool({
-      host: process.env.DB_HOST || '127.0.0.1', // Default host
-      port: process.env.DB_PORT || 3306,       // Default MySQL port
+    const config = {
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      connectionLimit: 10,        // Max number of connections
-      connectTimeout: 10000,     // 10 seconds
-      acquireTimeout: 10000,     // 10 seconds
-      waitForConnections: true,  // Default behavior
-      queueLimit: 0,             // Unlimited queue
-    });
+      connectionLimit: 10,
+    };
 
-    console.log('Database connection pool created successfully.');
-    return pool;
-  } catch (error) {
-    console.error('Error creating database connection pool:', error.message);
-    console.error(`Database Host: ${process.env.DB_HOST}, Port: ${process.env.DB_PORT}`);
-    throw error; // Re-throw the error to handle it elsewhere
-  }
-};
-
-// Gracefully close the database pool on application shutdown
-const closeDatabaseConnection = async () => {
-  try {
-    if (pool) {
-      await pool.end();
-      console.log('Database connection pool closed successfully.');
+    if (process.env.NODE_ENV === 'production') {
+      // Production: Use Cloud SQL socket
+      config.socketPath = `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`;
+    } else {
+      // Local development: Use Cloud SQL public IP
+      config.host = '34.42.3.185'; // Replace with your actual Cloud SQL public IP
+      config.port = 3306;
     }
+
+    console.log('Attempting to connect to the database...');
+
+    const pool = await mysql.createPool(config);
+
+    // Test the connection
+    const connection = await pool.getConnection();
+    await connection.query('SELECT 1');
+    connection.release();
+
+    console.log('Database connection successful');
+    return pool;
+
   } catch (error) {
-    console.error('Error closing the database connection pool:', error.message);
+    console.error('Database connection failed:', {
+      message: error.message,
+      code: error.code,
+      errno: error.errno,
+      syscall: error.syscall,
+      address: error.address,
+      environment: process.env.NODE_ENV,
+    });
+    throw error;
   }
 };
 
-// Export setup and close functions
-module.exports = {
-  setup: connectToDatabase,
-  close: closeDatabaseConnection,
-};
-
+module.exports.setup = connectToDatabase;
