@@ -23,6 +23,7 @@ const AdminDashboard = () => {
         regular: 0,
         author_event: 0,
         regular_event: 0
+    });
     
 
     const fetchData = async () => {
