@@ -89,17 +89,28 @@ Use any 5 digits for postal code
                     API.get(`/users/${userId}`),
                     API.get(`/attendee_events/${userId}`),
                     API.get(`/user/tickets/${userId}`),
-                    
                 ]);
 
+                console.log('Raw Events Response:', eventsResponse.data);
+
                 const userData = userResponse?.data?.user || null;
+                // Get the events array directly
                 const events = eventsResponse?.data?.events || [];
                 const fetchedTickets = ticketsResponse?.data?.tickets || [];
+                
+                console.log('Final Processed Events:', events);
                 
                 setUser(userData);
                 setRegisteredEvents(events);
                 setTickets(fetchedTickets);
                 
+                if (!events.length) {
+                    setPaidAmount(0);
+                    setUnpaidAmount(0);
+                    return;
+                }
+
+                // Calculate totals using the fee field from the events
                 const { paid, unpaid } = events.reduce((acc, event) => {
                     const ticket = fetchedTickets.find(t => t.eventName === event.name);
                     const eventFee = parseFloat(event.fee || 0);
@@ -116,6 +127,7 @@ Use any 5 digits for postal code
                 setUnpaidAmount(unpaid);
             } catch (err) {
                 console.error('Error fetching data:', err);
+                console.error('Error details:', err.response?.data);
                 setError("Failed to load profile or events.");
             } finally {
                 setIsLoading(false);
@@ -148,6 +160,15 @@ Use any 5 digits for postal code
     }, [user]);
 
     const calculateTotalFees = () => {
+        // Check if registeredEvents is an array, if not return default values
+        if (!Array.isArray(registeredEvents)) {
+            return {
+                baseRegistrationFee: 0,
+                additionalEventFees: 0,
+                totalFee: 0
+            };
+        }
+
         const coreEvents = registeredEvents.filter(
             (event) => event?.event_type?.toLowerCase() === "core"
         );
@@ -172,6 +193,48 @@ Use any 5 digits for postal code
     };
 
     const { baseRegistrationFee, additionalEventFees, totalFee } = calculateTotalFees();
+
+    const handlePaymentClick = () => {
+        // Calculate unpaid events and their total
+        const unpaidEvents = registeredEvents.filter(event => {
+            const ticket = tickets.find(t => t.eventName === event.name);
+            return !ticket || ticket.paymentStatus !== 'succeeded';
+        });
+
+        const unpaidTotal = unpaidEvents.reduce((total, event) => {
+            return total + parseFloat(event.fee || 0);
+        }, 0);
+
+        console.log('Payment Debug:', {
+            unpaidEvents,
+            unpaidTotal,
+            userId: localStorage.getItem("userId")
+        });
+
+        if (unpaidTotal <= 0) {
+            console.log('No unpaid amount to process');
+            return;
+        }
+
+        try {
+            console.log('Attempting navigation to payment page with:', {
+                amount: unpaidTotal,
+                events: unpaidEvents
+            });
+            
+            // Navigate to the Payment page with the necessary data
+            navigate('/payment', {
+                state: {
+                    amount: unpaidTotal,
+                    userId: localStorage.getItem("userId"),
+                    events: unpaidEvents,
+                    returnUrl: '/profile' // Add return URL for after payment
+                }
+            });
+        } catch (error) {
+            console.error('Navigation error:', error);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -261,7 +324,7 @@ Use any 5 digits for postal code
                             </div>
                         )}
 
-                        {totalFee > paidAmount ? (
+                        {totalFee > paidAmount && (
                             <div className="payment-section unpaid">
                                 <h3>Payment Required</h3>
                                 <p className="unpaid-amount">
@@ -269,22 +332,13 @@ Use any 5 digits for postal code
                                 </p>
                                 <button 
                                     className="primary-button"
-                                    onClick={() => navigate('/payment', {
-                                        state: {
-                                            amount: totalFee - paidAmount,
-                                            userId: localStorage.getItem("userId"),
-                                            events: registeredEvents
-                                        }
-                                    })}
+                                    onClick={() => {
+                                        console.log('Payment button clicked');
+                                        handlePaymentClick();
+                                    }}
                                 >
                                     Pay Unpaid Balance
                                 </button>
-                            </div>
-                        ) : (
-                            <div className="payment-section paid">
-                                <p className="no-payment-required">
-                                    No payment required - All fees have been paid
-                                </p>
                             </div>
                         )}
                     </div>
