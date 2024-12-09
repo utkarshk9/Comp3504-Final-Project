@@ -26,6 +26,17 @@ app.use(cors({
     credentials: true
 }));
 
+// Enable CORS for all routes
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'https://your-frontend-domain.com'  // Add your deployed frontend domain
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
 // Load environment variables
 dotenv.config();
 
