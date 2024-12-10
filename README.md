@@ -46,7 +46,7 @@ Prerequisites
  Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo-url/conference-registration-system.git
+   git clone https://github.com/utkarshk9/Comp3504-Final-Project.git
    ```
 2. Navigate to the **frontend** folder and install dependencies:
    ```bash
