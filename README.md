@@ -10,7 +10,7 @@ User Features
 - Profile Management: Includes full name, email address, dietary restrictions, and pronouns.
 - Fee Calculation:Authors and regular attendees pay different fees, with optional additional events adding extra costs.
 - Event Selection:Users can choose optional events beyond the main conference.
-- - Mobile-friendly responsive desig
+-  Mobile-friendly responsive design
 
 Admin Features
 - Content Management: Admins can easily update conference content, fees, and optional event details through an intuitive UI.
