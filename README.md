@@ -41,7 +41,7 @@ Setup Instructions
 Prerequisites
 - Node.js and npm installed
 - Database  set up
-- Payment gateway credentials (Stripe/PayPal)
+- Payment gateway credentials (Stripe)
 
  Steps
 1. Clone the repository:
